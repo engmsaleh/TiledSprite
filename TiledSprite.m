@@ -8,16 +8,6 @@
 
 #import "TiledSprite.h"
 
-@interface TiledSprite()
-
-// For performance reasons we render all repeated texture nodes once of screen and create a texture out of that so we don't have to go through the entire tree each draw call
-@property CCRenderTexture *renderTexture;
-
-// We are going to use a batchnode to create the nodes for the first time since all nodes have the same texture this is faster
-@property CCSpriteBatchNode *batchNode;
-
-@end
-
 @implementation TiledSprite
 
 + (id)tileSpriteWithTexture:(CCTexture *)texture rect:(CGRect)rect
@@ -67,8 +57,8 @@
 - (void)render:(CCTexture *)texture
 {
 	// Create a batch node to draw all the sprite nodes the first time
-	self.batchNode = [CCSpriteBatchNode batchNodeWithTexture:self.texture];
-	self.batchNode.anchorPoint = CGPointMake(0, 0);
+	CCSpriteBatchNode *batchNode = [CCSpriteBatchNode batchNodeWithTexture:self.texture];
+	batchNode.anchorPoint = CGPointMake(0, 0);
 	
 	CGSize textureSize = self.texture.contentSize;
 	
@@ -107,7 +97,7 @@
 
 			// The anchor point is top left, since we start from topleft in the loop too
 			sprite.anchorPoint = CGPointMake(0, 1);
-			[self.batchNode addChild:sprite];
+			[batchNode addChild:sprite];
 			
 			// We have an extra child!
 			numberOfChilds++;
@@ -118,37 +108,31 @@
 	if(numberOfChilds == 1)
 	{
 		// Add the batchNode as a child
-		[self addChild:self.batchNode];
+		[self addChild:batchNode];
 	}
 	// It would be faster to create the CGImage
 	else
 	{
-		self.renderTexture.anchorPoint = CGPointMake(0, 0);
-
 		// Create a rendertexture with the correct size
-		self.renderTexture = [CCRenderTexture renderTextureWithWidth:self.contentSizeInPoints.width height:self.contentSizeInPoints.height];
-		[self.renderTexture addChild:self.batchNode];
+		CCRenderTexture *renderTexture = [CCRenderTexture renderTextureWithWidth:self.contentSizeInPoints.width height:self.contentSizeInPoints.height];
+		[renderTexture addChild:batchNode];
 		
 		// Render the nodes offscreen in the renderTexture
-		[self.renderTexture begin];
-		for(CCNode *child in self.renderTexture.children)
+		[renderTexture begin];
+		for(CCNode *child in renderTexture.children)
 		{
 			[child visit];
 		}
-		[self.renderTexture end];
+		[renderTexture end];
 		
 		// Create a texture from the rendertexture's CGImage
-		CCTexture *texture = [[CCTexture alloc] initWithCGImage:[self.renderTexture newCGImage] contentScale:[[UIScreen mainScreen] scale]];
+		CCTexture *texture = [[CCTexture alloc] initWithCGImage:[renderTexture newCGImage] contentScale:[[UIScreen mainScreen] scale]];
 		
 		// Create the sprite node for the texture and add to self so it is displayed
 		CCSprite *spriteNode = [CCSprite spriteWithTexture:texture];
 		
 		spriteNode.anchorPoint = CGPointMake(0, 0);
 		[self addChild:spriteNode];
-		
-		// Cleaning up a bit
-		self.batchNode = nil;
-		self.renderTexture = nil;
 	}
 }
 
