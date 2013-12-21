@@ -59,10 +59,11 @@
 	// First clear out the old
 	[self clear];
 	
+	// And render the repeated texture
 	[self render:self.texture];
 }
 
-// The texture is not a power of two, falling back to a slower mechanism
+// Render the texture
 - (void)render:(CCTexture *)texture
 {
 	// Create a batch node to draw all the sprite nodes the first time
