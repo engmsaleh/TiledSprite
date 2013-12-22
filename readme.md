@@ -6,16 +6,16 @@ Include the TiledSprite.h and .m file in your Cocos2D project. And create a spri
 
 ```
 // Get the current screen size
-	CGSize screenSize = [UIScreen mainScreen].bounds.size;
-	
-	// Load the repeated pattern as a texture
-	CCTexture *pattern = [CCTexture textureWithFile:@"example/pattern.png"];
-	
-	// Adn create the tiledsprite with the full screen size
-	TiledSprite *tiledSprite = [TiledSprite tileSpriteWithTexture:pattern rect:CGRectMake(0, 0, screenSize.width, screenSize.height)];
-	
-	// And add to the scene
-	[self addChild:tiledSprite];
+CGSize screenSize = [UIScreen mainScreen].bounds.size;
+
+// Load the repeated pattern as a texture
+CCTexture *pattern = [CCTexture textureWithFile:@"example/pattern.png"];
+
+// Adn create the tiledsprite with the full screen size
+TiledSprite *tiledSprite = [TiledSprite tileSpriteWithTexture:pattern rect:CGRectMake(0, 0, screenSize.width, screenSize.height)];
+
+// And add to the scene
+[self addChild:tiledSprite];
 ```
 
 ## Example
