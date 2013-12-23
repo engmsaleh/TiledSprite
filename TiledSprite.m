@@ -72,10 +72,6 @@
 		{
 			CCSprite *sprite;
 			
-			// For cropped sprites the y position must be recalculated for others it is just the x and y from the loop
-			CGFloat yPosition = y;
-			CGFloat xPosition = x;
-			
 			// Determine if the full sprite fits
 			if((x + textureSize.width <= self.contentSize.width) && (y - textureSize.height >= 0))
 			{
@@ -91,12 +87,12 @@
 				// Create a node with the cropped size
 				sprite = [CCSprite spriteWithTexture:self.texture rect:CGRectMake(0, 0, remainingWidth, remainingHeight)];
 			}
-			
-			// And add the sprite on the correct position
-			sprite.position = CGPointMake(xPosition, yPosition);
 
 			// The anchor point is top left, since we start from topleft in the loop too
 			sprite.anchorPoint = CGPointMake(0, 1);
+
+			// And add the sprite on the correct position
+			sprite.position = CGPointMake(x, y);
 			[batchNode addChild:sprite];
 			
 			// We have an extra child!
