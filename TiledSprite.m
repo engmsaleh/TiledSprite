@@ -134,7 +134,9 @@
 
 - (void)clear
 {
-	for(CCNode *child in self.children)
+	// Can't loop and remove from the same array at the same time
+	NSArray *currentChildren = [NSArray arrayWithArray:self.children];
+	for(CCNode *child in currentChildren)
 	{
 		[child removeFromParent];
 	}
